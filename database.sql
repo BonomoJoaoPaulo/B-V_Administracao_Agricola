@@ -22,7 +22,7 @@ CREATE TABLE Cultura
  ano INT
 ); 
 
-CREATE TABLE Registro de Custo 
+CREATE TABLE Registro_de_Custo 
 ( 
  ID_registro_custo SERIAL PRIMARY KEY ,  
  tipo_custo VARCHAR(100),  
