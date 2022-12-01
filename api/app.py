@@ -13,7 +13,7 @@ def working():
 @app.route('/propriedades/read', methods=['GET'])
 def get_all_propertys():
     query = """
-        SELECT nome FROM Propriedade 
+        SELECT * FROM Propriedade 
     """
     res = None
     with get_connection().cursor() as cursor:
@@ -28,18 +28,25 @@ def get_all_propertys():
             value = str(value)
             propertys_list.append(value)
     
-
-    return jsonify(propertys_list)
+    return jsonify(res)
 
 @app.route('/propriedades/create', methods=['POST'])
 def create_property():
     body = request.get_json()
+    nome = body['nome']
+    area_cultivada = body['area_cultivada']
+    localidade = body['localidade']
+    proprietario = body['proprietário']
+    cultura = body['cultura']
+    print(type(nome), type(area_cultivada), type(localidade), type(proprietario), type(cultura))
     query = f""" INSERT INTO Propriedade 
-    (nome, area, endereco, telefone, email, ID_proprietario) VALUES
-    ({body['nome']}, {body['area']}, {body['endereco']}, {body['telefone']}, {body['email']}, {body['ID_proprietario']})"""
+    (nome, area_cultivada, localidade, proprietário, cultura) VALUES
+    ({body['nome']}, {body['area_cultivada']}, {body['localidade']}, {body['proprietário']}, {body['cultura']})"""
 
     with get_connection().cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute('INSERT INTO Propriedade (nome, area_cultivada, localidade, proprietário, cultura)'
+            'VALUES (%s, %s, %s, %s, %s)',
+            (10, area_cultivada, localidade, 1, cultura))
     close_connection()
     
     return "Property created"
