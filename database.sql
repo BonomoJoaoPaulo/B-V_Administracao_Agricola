@@ -1,100 +1,94 @@
 CREATE TABLE Propriedade 
 ( 
- nome INT,  
- ID_propriedade SERIAL PRIMARY KEY,  
+ ID_propriedade INT PRIMARY KEY AUTO_INCREMENT,
+ nome VARCHAR(n),  
  ultima_colheita_data DATE,  
- custo_ano FLOAT,  
- localidade VARCHAR(50),  
- faturamento_ano FLOAT,  
- proprietário INT,  
- cultura VARCHAR(50),  
+ localidade VARCHAR(n),  
  area_cultivada FLOAT,  
- ano INT
+ idProdutor INT,  
+ idCultura INT,  
 ); 
 
 CREATE TABLE Cultura 
 ( 
- ID_cultura SERIAL PRIMARY KEY ,  
- nome VARCHAR(50),  
- custo_ano FLOAT,  
- faturamento_ano FLOAT,  
- area_cultivada FLOAT,  
- ano INT
+ ID_cultura INT PRIMARY KEY AUTO_INCREMENT,  
+ nome VARCHAR(n),  
 ); 
 
-CREATE TABLE Registro_de_Custo 
+CREATE TABLE Registro de Custo 
 ( 
- ID_registro_custo SERIAL PRIMARY KEY ,  
- tipo_custo VARCHAR(100),  
+ ID_registro_custo INT PRIMARY KEY AUTO_INCREMENT,  
+ tipo_custo VARCHAR(n),  
  valor_do_custo FLOAT,  
- local_de_despesa VARCHAR(50),  
- cultura_destinada VARCHAR(50),  
- propriedade_destino VARCHAR(50),  
- ano INT,  
- descrição VARCHAR(100) 
+ local_de_despesa VARCHAR(n),  
+ data DATE,  
+ descricao_de_custo VARCHAR(n),  
 ); 
 
-CREATE TABLE Proprietário 
+CREATE TABLE Produtor 
 ( 
- ID_proprietário SERIAL PRIMARY KEY ,  
- nome VARCHAR(100)
+ ID_produtor INT PRIMARY KEY AUTO_INCREMENT,  
+ nome VARCHAR(n),  
 ); 
 
-CREATE TABLE Funcionário 
+CREATE TABLE Funcionario 
 ( 
- ID_funcionário SERIAL PRIMARY KEY ,  
- nome VARCHAR(50),  
- data_nascimento INT,  
- sexo CHAR(20),  
- telefone CHAR(15),  
+ ID_funcionario INT PRIMARY KEY AUTO_INCREMENT,  
+ nome VARCHAR(n),  
+ data_nascimento DATE,  
+ sexo CHAR(n),  
+ telefone CHAR(n),  
  data_de_ingresso DATE,  
- salário FLOAT,  
- tipo VARCHAR(50)
+ salario FLOAT,  
+ tipo VARCHAR(n),  
+ idProdutor INT,  
+ idPropriedade INT,  
 ); 
 
-CREATE TABLE Maquinário 
+CREATE TABLE Maquinario 
 ( 
- ID_maquinário SERIAL PRIMARY KEY ,  
- custo_total FLOAT,  
- nome VARCHAR(100),  
- descrição VARCHAR(100)  
-); 
-
-CREATE TABLE Produz_prop_cult 
-( 
- ID_prop_cult SERIAL PRIMARY KEY
-); 
-
-CREATE TABLE Registro_custo_cult 
-( 
- ID_custo_cult SERIAL PRIMARY KEY
+ ID_maquinario INT PRIMARY KEY AUTO_INCREMENT,  
+ nome VARCHAR(n),  
+ descricao VARCHAR(n),  
 ); 
 
 CREATE TABLE Registro_custo_prop 
 ( 
- ID_custo_propri SERIAL PRIMARY KEY
+ ID_reg_custo_propriedade INT PRIMARY KEY AUTO_INCREMENT,  
+ ID_registro_custo INT,  
+ ID_propriedade INT,  
 ); 
 
-CREATE TABLE Rel_maquinário_cultura 
+CREATE TABLE Rel_maquinario_cultura 
 ( 
- ID_maquinário_cultura SERIAL PRIMARY KEY
+ ID_maquinario_cultura INT PRIMARY KEY AUTO_INCREMENT,  
+ ID_cultura INT,  
+ ID_maquinario INT,  
 ); 
 
-CREATE TABLE Rel_maquinário_propriedade 
+CREATE TABLE Rel_maquinario_propriedade 
 ( 
- ID_rel_maquinário_propriedade SERIAL PRIMARY KEY 
+ ID_rel_maquinario_propriedade INT PRIMARY KEY AUTO_INCREMENT,  
+ ID_maquinario INT,  
+ ID_propriedade INT,  
 ); 
 
-ALTER TABLE Propriedade ADD FOREIGN KEY(ID_proprietário) REFERENCES Proprietário (ID_proprietário)
-ALTER TABLE Funcionário ADD FOREIGN KEY(ID_propriedade) REFERENCES Propriedade (ID_propriedade)
-ALTER TABLE Funcionário ADD FOREIGN KEY(ID_proprietário) REFERENCES Proprietário (ID_proprietário)
-ALTER TABLE Produz_prop_cult ADD FOREIGN KEY(ID_propriedade) REFERENCES Propriedade (ID_propriedade)
-ALTER TABLE Produz_prop_cult ADD FOREIGN KEY(ID_cultura) REFERENCES Cultura (ID_cultura)
-ALTER TABLE Registro_custo_cult ADD FOREIGN KEY(ID_cultura) REFERENCES Cultura (ID_cultura)
-ALTER TABLE Registro_custo_cult ADD FOREIGN KEY(ID_registro_custo) REFERENCES Registro de Custo (ID_registro_custo)
+CREATE TABLE Registro_custo_maquin 
+( 
+ ID_registro_custo_maquinario INT PRIMARY KEY AUTO_INCREMENT,  
+ ID_registro_custo INT,  
+ ID_maquinario INT,  
+); 
+
+ALTER TABLE Propriedade ADD FOREIGN KEY(idProdutor) REFERENCES Produtor (idProdutor)
+ALTER TABLE Propriedade ADD FOREIGN KEY(idCultura) REFERENCES Cultura (idCultura)
+ALTER TABLE Funcionario ADD FOREIGN KEY(idProdutor) REFERENCES Produtor (idProdutor)
+ALTER TABLE Funcionario ADD FOREIGN KEY(idPropriedade) REFERENCES Propriedade (idPropriedade)
 ALTER TABLE Registro_custo_prop ADD FOREIGN KEY(ID_registro_custo) REFERENCES Registro de Custo (ID_registro_custo)
 ALTER TABLE Registro_custo_prop ADD FOREIGN KEY(ID_propriedade) REFERENCES Propriedade (ID_propriedade)
-ALTER TABLE Rel_maquinário_cultura ADD FOREIGN KEY(ID_cultura) REFERENCES Cultura (ID_cultura)
-ALTER TABLE Rel_maquinário_cultura ADD FOREIGN KEY(ID_maquinário) REFERENCES Maquinário (ID_maquinário)
-ALTER TABLE Rel_maquinário_propriedade ADD FOREIGN KEY(ID_maquinário) REFERENCES Maquinário (ID_maquinário)
-ALTER TABLE Rel_maquinário_propriedade ADD FOREIGN KEY(ID_propriedade) REFERENCES Propriedade (ID_propriedade)
+ALTER TABLE Rel_maquinario_cultura ADD FOREIGN KEY(ID_cultura) REFERENCES Cultura (ID_cultura)
+ALTER TABLE Rel_maquinario_cultura ADD FOREIGN KEY(ID_maquinario) REFERENCES Maquinario (ID_maquinario)
+ALTER TABLE Rel_maquinario_propriedade ADD FOREIGN KEY(ID_maquinario) REFERENCES Maquinario (ID_maquinario)
+ALTER TABLE Rel_maquinario_propriedade ADD FOREIGN KEY(ID_propriedade) REFERENCES Propriedade (ID_propriedade)
+ALTER TABLE Registro_custo_maquin ADD FOREIGN KEY(ID_registro_custo) REFERENCES Registro de Custo (ID_registro_custo)
+ALTER TABLE Registro_custo_maquin ADD FOREIGN KEY(ID_maquinario) REFERENCES Maquinario (ID_maquinario)
