@@ -10,7 +10,7 @@ app = Flask(__name__)
 def working():
     return "It's working!"
 
-@app.route('/propriedades/read', methods=['GET'])
+@app.route('/Propriedade/read', methods=['GET'])
 def get_all_propertys():
     query = """
         SELECT * FROM Propriedade 
@@ -30,41 +30,43 @@ def get_all_propertys():
     
     return jsonify(res)
 
-@app.route('/propriedades/create', methods=['POST'])
+@app.route('/Propriedade/create', methods=['POST'])
 def create_property():
     body = request.get_json()
     nome = body['nome']
-    area_cultivada = body['area_cultivada']
+    ultima_colheita_data = body['ultima_colheita_data']
     localidade = body['localidade']
-    proprietario = body['proprietário']
-    cultura = body['cultura']
-    print(type(nome), type(area_cultivada), type(localidade), type(proprietario), type(cultura))
+    area_cultivada = body['area_cultivada']
+    IDprodutor = body['IDprodutor']
+    IDcultura = body['IDcultura']
+    print(type(nome), type(ultima_colheita_data), type(area_cultivada), type(localidade), type(IDprodutor), type(IDcultura))
     query = f""" INSERT INTO Propriedade 
     (nome, area_cultivada, localidade, proprietário, cultura) VALUES
-    ({body['nome']}, {body['area_cultivada']}, {body['localidade']}, {body['proprietário']}, {body['cultura']})"""
+    ({body['nome']}, {body['ultima_colheita_data']}, {body['localidade']}, {body['area_cultivada']}, 
+    {body['IDprodutor']}, {body['IDcultura']})"""
 
     with get_connection().cursor() as cursor:
-        cursor.execute('INSERT INTO Propriedade (nome, area_cultivada, localidade, proprietário, cultura)'
-            'VALUES (%s, %s, %s, %s, %s)',
-            (10, area_cultivada, localidade, 1, cultura))
+        cursor.execute('INSERT INTO Propriedade (nome, ultima_colheita_data, localidade, area_cultivada, IDprodutor, IDcultura)'
+            'VALUES (%s, %s, %s, %s, %s, %s)',
+            (nome, ultima_colheita_data, localidade, area_cultivada, IDprodutor, IDcultura))
     close_connection()
     
     return "Property created"
 
-@app.route('/propriedades/update', methods=['PUT'])
-def update_property():
-    body = request.get_json()
-    query = f""" UPDATE Propriedade SET
-    nome = {body['nome']}, area = {body['area']}, endereco = {body['endereco']}, telefone = {body['telefone']}, email = {body['email']}, ID_proprietario = {body['ID_proprietario']}
-    WHERE nome = {body['nome']}"""
+# @app.route('/Propriedade/update', methods=['PUT'])
+# def update_property():
+#     body = request.get_json()
+#     query = f""" UPDATE Propriedade SET
+#     nome = {body['nome']}, ultima_colheita_data = {body['ultima_colheita_data']}, localidade = {body['localidade']}, area_cultivada = {body['area_cultivada']}, IDprodutor = {body['IDprodutor']}, IDcultura = {body['IDcultura']}
+#     WHERE nome = {body['nome']}"""
 
-    with get_connection().cursor() as cursor:
-        cursor.execute(query)
-    close_connection()
+#     with get_connection().cursor() as cursor:
+#         cursor.execute(query)
+#     close_connection()
     
-    return "Property updated"
+#     return "Property updated"
 
-@app.route('/propriedades/delete', methods=['DELETE'])
+@app.route('/Propriedade/delete', methods=['DELETE'])
 def delete_property():
     body = request.get_json()
     query = f""" DELETE FROM Propriedade WHERE nome = {body['nome']}"""
