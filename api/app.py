@@ -403,5 +403,262 @@ def delete_machinery():
     
     return "machinery deleted"
 
+
+@app.route('/Registro_custo_prop/create', methods=['POST'])
+def create_cost_register_prop():
+    body = request.get_json()
+    ID_reg_custo_propriedade = body['ID_reg_custo_propriedade']
+    ID_propriedade = body['ID_propriedade']
+
+    query = (f"INSERT INTO Registro_custo_prop (ID_reg_custo_propriedade, ID_propriedade) VALUES('{ID_reg_custo_propriedade}', '{ID_propriedade}')")
+    print(query)
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_prop created"
+
+@app.route('/Registro_custo_prop/read', methods=['GET'])
+def get_all_cost_register_prop():
+    query = """
+        SELECT * FROM Registro_custo_prop
+    """
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    cost_register_prop_list = []
+
+    for item in res:
+        for value in item.values():
+            value = str(value)
+            cost_register_prop_list.append(value)
+    
+    return jsonify(res)
+
+@app.route('/Registro_custo_prop/update', methods=['POST'])
+def update_cost_register_prop():
+    body = request.get_json()
+    id = body['id']
+    new_property = body['ID_propriedade']
+    query = (f"UPDATE Registro_custo_prop SET ID_propriedade = ('{new_property}') WHERE ID_reg_custo_propriedade = ('{id}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_prop updated"
+
+@app.route('/Registro_custo_prop/delete', methods=['DELETE'])
+def delete_cost_register_prop():
+    body = request.get_json()
+    query = (f"DELETE FROM Registro_custo_prop WHERE ID_reg_custo_propriedade = ('{body['id']}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_prop deleted"
+
+
+@app.route('/Rel_maquinario_cultura/create', methods=['POST'])
+def create_rel_maq_cult():
+    body = request.get_json()
+    ID_cultura = body['ID_cultura']
+    ID_maquinario = body['ID_maquinario']
+
+    query = (f"INSERT INTO Rel_maquinario_cultura (ID_cultura, ID_maquinario) VALUES('{ID_cultura}', '{ID_maquinario}')")
+    print(query)
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_cult created"
+
+@app.route('/Rel_maquinario_cultura/read', methods=['GET'])
+def get_all_rel_maq_cult():
+    query = """
+        SELECT * FROM Rel_maquinario_cultura
+    """
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    rel_maq_cult_list = []
+
+    for item in res:
+        for value in item.values():
+            value = str(value)
+            rel_maq_cult_list.append(value)
+    
+    return jsonify(res)
+
+@app.route('/Rel_maquinario_cultura/update', methods=['POST'])
+def update_rel_maq_cult():
+    body = request.get_json()
+    id = body['id']
+    new_culture = body['ID_cultura']
+    query = (f"UPDATE Rel_maquinario_cultura SET ID_cultura = ('{new_culture}') WHERE ID_maquinario_cultura = ('{id}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_cult updated"
+
+@app.route('/Rel_maquinario_cultura/delete', methods=['DELETE'])
+def delete_producer():
+    body = request.get_json()
+    query = (f"DELETE FROM Rel_maquinario_cultura WHERE ID_maquinario_cultura = ('{body['id']}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_cult deleted"
+
+
+@app.route('/Rel_maquinario_propriedade/create', methods=['POST'])
+def create_rel_maq_property():
+    body = request.get_json()
+    ID_propriedade = body['ID_propriedade']
+    ID_maquinario = body['ID_maquinario']
+
+    query = (f"INSERT INTO Rel_maquinario_propriedade (ID_propriedade, ID_maquinario) VALUES('{ID_propriedade}', '{ID_maquinario}')")
+    print(query)
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_property created"
+
+@app.route('/Rel_maquinario_propriedade/read', methods=['GET'])
+def get_all_rel_maq_property():
+    query = """
+        SELECT * FROM Rel_maquinario_propriedade
+    """
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    rel_maq_property_list = []
+
+    for item in res:
+        for value in item.values():
+            value = str(value)
+            rel_maq_property_list.append(value)
+    
+    return jsonify(res)
+
+@app.route('/Rel_maquinario_propriedade/update', methods=['POST'])
+def update_rel_maq_cult():
+    body = request.get_json()
+    id = body['id']
+    new_property = body['ID_propriedade']
+    query = (f"UPDATE Rel_maquinario_propriedade SET ID_propriedade = ('{new_property}') WHERE ID_maquinario_propriedade = ('{id}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_property updated"
+
+@app.route('/Rel_maquinario_propriedade/delete', methods=['DELETE'])
+def delete_producer():
+    body = request.get_json()
+    query = (f"DELETE FROM Rel_maquinario_propriedade WHERE ID_maquinario_propriedade = ('{body['id']}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "rel_maq_property deleted"
+
+
+@app.route('/Registro_custo_maquin/create', methods=['POST'])
+def create_cost_register_maquin():
+    body = request.get_json()
+    ID_registro_custo_maquinario = body['ID_registro_custo_maquinario']
+    ID_maquinario= body['ID_maquinario']
+
+    query = (f"INSERT INTO Registro_custo_maquin (ID_registro_custo_maquinario, ID_maquinario) VALUES('{ID_registro_custo_maquinario}', '{ID_maquinario}')")
+    print(query)
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_maquin created"
+
+@app.route('/Registro_custo_maquin/read', methods=['GET'])
+def get_all_cost_register_maquin():
+    query = """
+        SELECT * FROM Registro_custo_maquin
+    """
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    cost_register_maquin_list = []
+
+    for item in res:
+        for value in item.values():
+            value = str(value)
+            cost_register_maquin_list.append(value)
+    
+    return jsonify(res)
+
+@app.route('/Registro_custo_maquin/update', methods=['POST'])
+def update_cost_register_prop():
+    body = request.get_json()
+    id = body['id']
+    new_property = body['ID_maquinario']
+    query = (f"UPDATE Registro_custo_maquin SET ID_maquinario = ('{new_property}') WHERE ID_registro_custo_maquinario = ('{id}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_maquin updated"
+
+@app.route('/Registro_custo_maquin/delete', methods=['DELETE'])
+def delete_cost_register_prop():
+    body = request.get_json()
+    query = (f"DELETE FROM Registro_custo_maquin WHERE ID_registro_custo_maquinario = ('{body['id']}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "cost_register_maquin deleted"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
