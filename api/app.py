@@ -56,7 +56,7 @@ def get_cost_with_salary_by_culture():
 
     for item in res:
          for value in item.values():
-             value = str(value)
+             value = (value)
              cost_with_salary.append(value)
 
     return jsonify(cost_with_salary)
@@ -83,7 +83,7 @@ def get_producer_property_cost():
 
     for item in res:
         for value in item.values():
-            value = str(value)
+            value = (value)
             owner_property_cost.append(value)
 
     return jsonify(owner_property_cost)
@@ -143,6 +143,20 @@ def update_property():
     close_connection()
     
     return "Property updated"
+
+@app.route('/Propriedade/updatecultura', methods=['PUT'])
+def update_property_culture():
+    body = request.get_json()
+    id = body['id']
+    cultura = body['cultura']
+    query = (f"UPDATE Propriedade SET idCultura = ('{cultura}') WHERE ID_propriedade = ('{id}')")
+
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+    get_connection().commit()
+    close_connection()
+    
+    return "Property culture updated"
 
 @app.route('/Propriedade/delete', methods=['DELETE'])
 def delete_property():
