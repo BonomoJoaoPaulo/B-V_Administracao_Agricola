@@ -10,6 +10,79 @@ app = Flask(__name__)
 def working():
     return "It's working!"
 
+
+@app.route('/Propriedade/getcost', methods=['GET', 'POST'])
+def get_property_cost():
+
+    body = request.get_json()
+    id = body['id']
+    query = (f"""SELECT p.nome, rdc.valor_do_custo, rdc.data FROM Propriedade as p 
+        JOIN Registro_custo_prop as rcp ON p.ID_propriedade = rcp.ID_propriedade
+        JOIN Registro_de_Custo as rdc ON rcp.ID_registro_custo = rdc.ID_registro_custo
+        WHERE p.ID_propriedade = ('{id}')""")
+
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    cost_from_property_list = []
+
+    # for item in res:
+    #     for value in item.values():
+    #         value = str(value)
+    #         cost_from_property_list.append(value)
+
+    return res #cost_from_property_list
+
+@app.route('/Cultura/getcostwithworkers', methods=['GET'])
+def get_cost_with_salary_by_culture():
+    query = (f""" SELECT c.nome,f.salario FROM Cultura as c
+    JOIN Propriedade as p ON p.idCultura = c.ID_Cultura
+    JOIN Funcionario as f ON f.idPropriedade = p.ID_Propriedade """)
+
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    cost_with_salary = []
+
+    for item in res:
+         for value in item.values():
+             value = str(value)
+             cost_with_salary.append(value)
+
+    return jsonify(cost_with_salary)
+
+@app.route('/Produtor/getpropertycost', methods=['GET'])
+def get_producer_property_cost():
+
+    query = (f""" SELECT po.nome, rdc.valor_do_custo FROM Produtor as po
+        JOIN Propriedade as p ON p.idProdutor = po.ID_produtor
+        JOIN Registro_custo_prop as rcp ON p.ID_Propriedade = rcp.ID_Propriedade
+        JOIN Registro_de_Custo as rdc ON rcp.ID_registro_custo = rdc.ID_registro_custo""")
+        #WHERE po.ID_produtor = ('{ID_produtor}')""")
+
+
+    res = None
+    with get_connection().cursor() as cursor:
+        cursor.execute(query)
+        res = cursor.fetchall()
+    close_connection()
+
+    owner_property_cost = []
+
+    for item in res:
+        for value in item.values():
+            value = str(value)
+            owner_property_cost.append(value)
+
+    return jsonify(owner_property_cost)
+
+
 @app.route('/Propriedade/create', methods=['POST'])
 def create_property():
     body = request.get_json()
@@ -20,7 +93,7 @@ def create_property():
     IDprodutor = body['IDprodutor']
     IDcultura = body['IDcultura']
 
-    query = (f"INSERT INTO Propriedade (nome) VALUES('{nome}', '{ultima_colheita_data}', '{localidade}', '{area_cultivada}', '{IDprodutor}', '{IDcultura}')")
+    query = (f"INSERT INTO Propriedade (nome, ultima_colheita_data, localidade, area_cultivada, idProdutor, idCultura) VALUES('{nome}', '{ultima_colheita_data}', '{localidade}', '{area_cultivada}', '{IDprodutor}', '{IDcultura}')")
     print(query)
 
     with get_connection().cursor() as cursor:
@@ -315,11 +388,11 @@ def get_all_employees():
     return jsonify(res)
 
 @app.route('/Funcionario/update', methods=['POST'])
-def update_producer():
+def update_employee():
     body = request.get_json()
     id = body['id']
-    new_name = body['name']
-    query = (f"UPDATE Funcionario SET nome = ('{new_name}') WHERE ID_funcionario = ('{id}')")
+    cargo = body['cargo']
+    query = (f"UPDATE Funcionario SET tipo = ('{cargo}') WHERE ID_funcionario = ('{id}')")
 
     with get_connection().cursor() as cursor:
         cursor.execute(query)
@@ -520,7 +593,7 @@ def update_rel_maq_cult():
     return "rel_maq_cult updated"
 
 @app.route('/Rel_maquinario_cultura/delete', methods=['DELETE'])
-def delete_producer():
+def delete_rel_maq_cult():
     body = request.get_json()
     query = (f"DELETE FROM Rel_maquinario_cultura WHERE ID_maquinario_cultura = ('{body['id']}')")
 
@@ -550,7 +623,7 @@ def create_rel_maq_property():
     return "rel_maq_property created"
 
 @app.route('/Rel_maquinario_propriedade/read', methods=['GET'])
-def get_all_rel_maq_property():
+def get_all_rel_maq_prop():
     query = """
         SELECT * FROM Rel_maquinario_propriedade
     """
@@ -570,7 +643,7 @@ def get_all_rel_maq_property():
     return jsonify(res)
 
 @app.route('/Rel_maquinario_propriedade/update', methods=['POST'])
-def update_rel_maq_cult():
+def update_rel_maq_prop():
     body = request.get_json()
     id = body['id']
     new_property = body['ID_propriedade']
@@ -584,7 +657,7 @@ def update_rel_maq_cult():
     return "rel_maq_property updated"
 
 @app.route('/Rel_maquinario_propriedade/delete', methods=['DELETE'])
-def delete_producer():
+def delete_rel_maq_prop():
     body = request.get_json()
     query = (f"DELETE FROM Rel_maquinario_propriedade WHERE ID_maquinario_propriedade = ('{body['id']}')")
 
@@ -634,7 +707,7 @@ def get_all_cost_register_maquin():
     return jsonify(res)
 
 @app.route('/Registro_custo_maquin/update', methods=['POST'])
-def update_cost_register_prop():
+def update_cost_register_maq():
     body = request.get_json()
     id = body['id']
     new_property = body['ID_maquinario']
@@ -648,7 +721,7 @@ def update_cost_register_prop():
     return "cost_register_maquin updated"
 
 @app.route('/Registro_custo_maquin/delete', methods=['DELETE'])
-def delete_cost_register_prop():
+def delete_cost_register_maq():
     body = request.get_json()
     query = (f"DELETE FROM Registro_custo_maquin WHERE ID_registro_custo_maquinario = ('{body['id']}')")
 
