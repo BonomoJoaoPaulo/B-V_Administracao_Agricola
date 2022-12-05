@@ -11,15 +11,17 @@ def working():
     return "It's working!"
 
 
-@app.route('/Propriedade/getcost', methods=['GET', 'POST'])
+#working
+@app.route('/Propriedade/getcostperyear', methods=['GET', 'POST'])
 def get_property_cost():
 
     body = request.get_json()
     id = body['id']
-    query = (f"""SELECT p.nome, rdc.valor_do_custo, rdc.data FROM Propriedade as p 
+    query = (f"""SELECT p.nome, EXTRACT(year FROM rdc.data) as year,  SUM(rdc.valor_do_custo) as custo_do_ano FROM Propriedade as p 
         JOIN Registro_custo_prop as rcp ON p.ID_propriedade = rcp.ID_propriedade
         JOIN Registro_de_Custo as rdc ON rcp.ID_registro_custo = rdc.ID_registro_custo
-        WHERE p.ID_propriedade = ('{id}')""")
+        WHERE p.ID_propriedade = ('{id}')
+        GROUP BY EXTRACT(year FROM rdc.data), p.nome""")
 
     res = None
     with get_connection().cursor() as cursor:
@@ -36,11 +38,13 @@ def get_property_cost():
 
     return res #cost_from_property_list
 
+#working
 @app.route('/Cultura/getcostwithworkers', methods=['GET'])
 def get_cost_with_salary_by_culture():
-    query = (f""" SELECT c.nome,f.salario FROM Cultura as c
+    query = (f""" SELECT c.nome, SUM(f.salario) as cost_with_func FROM Cultura as c
     JOIN Propriedade as p ON p.idCultura = c.ID_Cultura
-    JOIN Funcionario as f ON f.idPropriedade = p.ID_Propriedade """)
+    JOIN Funcionario as f ON f.idPropriedade = p.ID_Propriedade
+    GROUP BY c.nome""")
 
     res = None
     with get_connection().cursor() as cursor:
@@ -57,13 +61,15 @@ def get_cost_with_salary_by_culture():
 
     return jsonify(cost_with_salary)
 
-@app.route('/Produtor/getpropertycost', methods=['GET'])
+#working
+@app.route('/Produtor/getprdoucercost', methods=['GET'])
 def get_producer_property_cost():
 
-    query = (f""" SELECT po.nome, rdc.valor_do_custo FROM Produtor as po
+    query = (f""" SELECT po.nome, SUM(rdc.valor_do_custo) as custo_total_fazenda FROM Produtor as po
         JOIN Propriedade as p ON p.idProdutor = po.ID_produtor
         JOIN Registro_custo_prop as rcp ON p.ID_Propriedade = rcp.ID_Propriedade
-        JOIN Registro_de_Custo as rdc ON rcp.ID_registro_custo = rdc.ID_registro_custo""")
+        JOIN Registro_de_Custo as rdc ON rcp.ID_registro_custo = rdc.ID_registro_custo
+        Group BY po.nome""")
         #WHERE po.ID_produtor = ('{ID_produtor}')""")
 
 
@@ -128,8 +134,8 @@ def get_all_propertys():
 def update_property():
     body = request.get_json()
     id = body['id']
-    new_name = body['name']
-    query = (f"UPDATE Propriedade SET nome = ('{new_name}') WHERE ID_propriedade = ('{id}')")
+    produtor = body['produtor']
+    query = (f"UPDATE Propriedade SET idProdutor = ('{produtor}') WHERE ID_propriedade = ('{id}')")
 
     with get_connection().cursor() as cursor:
         cursor.execute(query)
